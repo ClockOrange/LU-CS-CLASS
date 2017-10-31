@@ -1,0 +1,85 @@
+/*
+*Name : Zhuocheng Shang
+*Date: 10/12/2017
+*/
+
+
+program Project2;
+
+#include( "stdlib.hhf" );
+
+static 
+    addVal:     int32:=0; //declare variables
+    multiVal:   int32:=0;
+    overFlow:   boolean;
+    carryOut:   boolean;
+   
+      
+
+begin Project2;
+
+    stdout.put( "Enter a short line of values: ",nl );
+    stdin.flushInput(); //get line of input
+    
+    stdin.geti32(); //get the first input as addend
+    mov(EAX,addVal);
+  
+  //first loop
+  forever
+  
+    stdin.geti32(); //get the second input as multiplican
+    mov(EAX,multiVal);
+    
+    breakif(multiVal <0); //end loop when the input is negative
+    
+    stdout.put("    THE ADDEND IS  ",addVal,nl); //print out addend
+    stdout.put("    THE MULTIPLICAN IS ",multiVal,nl); //print out  multiplican
+    
+    mov(addVal,EAX); //move addend to EAX
+    
+    
+    //set up register
+    mov(0,EBX);
+    mov(multiVal,ECX); 
+    
+   
+    //loop to multiply use add
+   repeat
+    
+     add(EAX,EBX); //EAX contain value of addend
+     
+     if(@o) then //check overflow
+        mov(true,overFlow);
+     endif;
+     
+     if(@c) then //check carry out
+       mov(true,carryOut);
+     endif;
+     
+     
+     dec(ECX); //decrement ECX by 1
+     
+  until(ECX = 0); //end loop condition 
+  
+  
+  if(overFlow=true) then
+  stdout.put("    OVERFLOW OCCURED ",nl);
+  endif;
+  
+  if(carryOut=true)then
+  stdout.put("    OVERFLOW OCCURED ",nl);
+  endif;
+  
+  stdout.put("    THE RESULT IS  ");
+  stdout.puti32(EBX);
+  stdout.put(nl);
+  stdout.put(nl);
+  
+  //update addend
+  mov(EBX,addVal);
+
+ endfor;
+ 
+ stdout.put("    THE  PROGRAM  IS  FINISHED");
+	
+end Project2;
