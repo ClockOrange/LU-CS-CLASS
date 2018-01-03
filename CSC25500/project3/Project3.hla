@@ -1,0 +1,259 @@
+program Project3;
+
+#include( "stdlib.hhf" )
+
+static
+      fileName: string := "data3.txt"; //give file name
+      fileHandle: int32; //set filehandle
+      value: int32;
+      
+      stdID: int32[100]; //declare studentID 
+      testScore: int32[100,4]; //declare 4 test array array
+
+      fname: string; //declare firstname
+      lname: string; //declare lastname
+      fullname: string[100]; //declare fullname array
+
+      NoSwap: boolean;
+
+      NumElements: int32; //declare number of elements
+      stopEle: int32; //declare stop element
+
+begin Project3;
+
+fileio.open(fileName,fileio.r); //file read only
+mov(eax,fileHandle); //move all data in file to fileHandle
+
+mov(0,ecx); //index for studentID array and fullName array
+mov(0,ebx);
+mov(0,edx); //index for score array index
+mov(0,NumElements);
+
+        /************************* first loop to read in all data ***************/
+        
+forever 
+
+  /********* read in ID ************/
+  
+fileio.geti32(fileHandle); 
+  //sace the value
+mov(eax, value);   
+		if (fileio.eof(fileHandle)) then     // if end of file
+			break;
+		endif; 
+		
+ //if not end of the file, move value to eax
+mov(value, eax);                   
+
+mov(eax,stdID[ecx*4]); //store studentID into array
+
+		
+   /********* read in name **********/
+     
+fileio.a_gets(fileHandle); //stop at white space
+mov(eax,fname); //firstname
+fileio.a_gets(fileHandle);
+mov(eax,lname); //lastname
+str.a_cat(fname,lname); //concats two string and stores in eax
+mov(eax,fullname[ecx*4]); //mov to fullName array
+str.free(fname); //free memory
+str.free(lname);
+
+  /********* read in Test Score ************/
+  
+for(mov(0,ebx);ebx<4;inc(ebx))do
+fileio.geti32(fileHandle); //read in test score
+mov(ecx,edx); //get row
+shl(2,edx);//shift left by2 
+add(ebx,edx); //get column
+mov(eax,testScore[edx*4]); 
+endfor;
+  
+inc(ecx);
+endfor;
+
+
+mov(ecx,NumElements);
+
+
+           /************************* second loop to print original data ***************/
+
+stdout.put("The original student data is:",nl);
+stdout.put(nl);
+stdout.put(" Student ID ");
+stdout.put("           Name     ");
+stdout.put("            Test1 ");
+stdout.put(" Test2");
+stdout.put("   Test3 ");
+stdout.put(" Test4",nl);
+stdout.put("------------");
+stdout.put("        ---------------    ");
+stdout.put("    ------  ");
+stdout.put("------  ");
+stdout.put("------ ");
+stdout.put("------", nl);
+
+
+mov(0,ecx); //index for studentID array and fullName array
+mov(0,ebx);
+mov(0,edx); //index for test score array
+
+for (mov(0,ecx); ecx < NumElements; inc(ecx)) do
+
+ /********* print ID ************/
+ 
+stdout.puti32Size(0,2,'0');
+stdout.puti32Size(stdID[ecx*4],4,'0');
+stdout.putsSize(" ",15,' ');
+
+ /********* print full name ************/
+ 
+stdout.putsSize(fullname[ecx*4],-20,' ');
+
+
+ /********* print test score ************/
+
+for(mov(0,ebx);ebx<4;inc(ebx))do
+mov(ecx,edx);
+shl(2,edx);
+add(ebx,edx);
+stdout.puti32Size(testScore[edx*4],7,' ');
+endfor;
+
+stdout.put(nl);
+stdout.put(nl);
+
+endfor;
+
+
+              /************************* third loop to swap data ********************/
+
+mov(0,ecx);
+mov(0,ebx);
+mov(0,edx);
+mov(0,esi);
+mov(0,edi);
+
+mov(NumElements,stopEle);
+sub(1,stopEle);
+
+repeat
+
+mov( true, NoSwap );
+for( mov( 0, ebx ); ebx < stopEle; inc( ebx )) do
+          // current index
+mov( stdID[ ebx*4], eax ); 
+                 //index+1
+if( eax > stdID[ ebx*4 + 4] ) then
+
+   /********* swap ID ************/
+   
+          //index +1    //move to ecx
+mov( stdID[ ebx*4 + 4 ], ecx ); 
+          //move [index+1] to [index]
+mov( ecx, stdID[ ebx*4 ] ); 
+    //eax contain [index] value, and move to [index+1]
+mov( eax, stdID[ ebx*4 + 4 ] ); 
+
+
+   /********* swap name ************/
+
+mov(fullname[ebx*4],eax);
+mov( fullname[ ebx*4 + 4 ], ecx );
+mov( ecx, fullname[ ebx*4 ] );
+mov( eax, fullname[ ebx*4 + 4 ] );
+
+
+  /********* swap test score ************/
+
+//testScore[row,edx]
+for(mov(0,edx);edx < 4; inc(edx)) do
+mov(ebx,esi);
+shl(2,esi);//get row, == ebx*4
+add(edx,esi);//get column
+mov(testScore[esi*4],eax);
+
+mov(ebx,edi);//get current row
+add(1,edi); //get next row
+shl(2,edi); //(ebx+1)*4
+add(edx,edi);//get the next column
+mov(testScore[edi*4],ecx);
+
+mov(eax,testScore[edi*4]);
+mov(ecx,testScore[esi*4]);
+endfor;
+
+mov(false,NoSwap);
+     endif;
+   endfor;
+until( NoSwap );
+
+
+
+              /************************* fourth loop to print sorted data ***************/
+
+mov(0,ecx);
+mov(0,ebx);
+mov(0,edx);
+
+stdout.put(nl);
+stdout.put(nl);
+
+stdout.put("The sorted student data is:",nl);
+stdout.put(nl);
+stdout.put(" Student ID ");
+stdout.put("           Name     ");
+stdout.put("            Test1 ");
+stdout.put(" Test2");
+stdout.put("   Test3 ");
+stdout.put(" Test4",nl);
+stdout.put("------------");
+stdout.put("        ---------------    ");
+stdout.put("    ------  ");
+stdout.put("------  ");
+stdout.put("------ ");
+stdout.put("------", nl);
+
+
+mov(0,ecx);
+mov(0,ebx);
+mov(0,edx);
+
+for (mov(0,ecx); ecx < NumElements; inc(ecx)) do
+
+ /********* print ID ************/
+
+stdout.puti32Size(0,2,'0');
+stdout.puti32Size(stdID[ecx*4],4,'0');
+stdout.putsSize(" ",15,' ');
+
+ /********* print full name ************/
+ 
+stdout.putsSize(fullname[ecx*4],-20,' ');
+
+
+ /********* print test score ************/
+
+for(mov(0,ebx);ebx<4;inc(ebx))do
+mov(ecx,edx);
+shl(2,edx);
+add(ebx,edx);
+stdout.puti32Size(testScore[edx*4],7,' ');
+endfor;
+
+stdout.put(nl);
+stdout.put(nl);
+
+endfor;
+
+
+         /************************* print our end of project ********************/
+
+stdout.put(nl);
+stdout.put("--------------------------------",nl);
+stdout.put("|        END OF PROJECT        |",nl);
+stdout.put("--------------------------------");
+stdout.put(nl);
+
+
+end Project3;

@@ -1,0 +1,90 @@
+﻿---------------------------
+|    Basic Information     |
+---------------------------
+
+Name: Zhuocheng Shang
+
+Date: 06/12/2017
+
+Platform: Microsoft
+
+
+
+------------------------
+|    Design Patterns   |
+------------------------
+
+1. Pattern #10: Stremlined Repetition
+   Open file dialogs and Save file dialogs that remember where the user last worked.
+
+2. Pattern #30: Animated Transition
+   "flipping" card by cliking via animation
+
+3. Pattern #33: Center Stage
+   the most significant information " cards " positioned at the center of the region of the page
+
+4. Pattern #39: Diagonal Balance
+   balance the content of a page along the dialog from upper left to lower right
+
+5. Pattern #46: Promient "Done" button
+   the visual flow of setin value page lead user to exit the page or complete an action
+
+
+
+----------------------------------------
+|    Special Steps needed to complier   |
+----------------------------------------
+
+import into Visual Studio and run program.
+
+######### NOTICE: ########## Only click messageBox after card finish flipping 
+ 
+1. Choose game mode on menu 
+
+2. "new game mode": pop up a window and let user set up game data
+
+    - Set color pairs
+    - Choose card back: olive / gray / image 
+    - Select size of cards: min is 4 and max is 10
+    - Click "Done" button will start a new game
+            - ask if user want to save data or not
+                  - save : save as TXT file
+                  - not save: start new game without saving
+
+3. " re-play game mode": pop up a filedialo allow uploading TXT game file
+
+4. Clikc two and only two cards will start the game.
+    - if two cards match, can continue play. At same time, player score will update
+	- if two cards not match, turn to computer play mode.
+
+5. Return button allow user to switch to menu windom
+
+6. Help button will show information  
+
+
+
+
+---------------
+|    Bugs     |
+---------------
+1. Only click messageBox after card finish flipped. If click the messagebox before card finish flipping, the card will not flip back
+2. Flipping image is not fluent
+
+
+----------------------------------------
+|    Brief Summary for my approaches   |
+----------------------------------------
+1. Set up module
+2. Set basic layout of each form
+3. let each form be "friend"
+4. set up switch window order
+5. Write click event for "New Game" button and "Re-Play" button
+   (deal with save file / upload file)
+6. Write methods to set up game data
+7. Write method to response on clicking cards and computer mode
+
+   
+others:  Source
+
+1. Visual Basic Documentation
+      

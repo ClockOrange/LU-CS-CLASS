@@ -1,0 +1,642 @@
+program project4LowLevel;
+
+	#include( "stdlib.hhf" )
+	
+	// record 
+type
+	point: record
+		ID: int32;
+		Names: string;
+		balance: int32;
+	endrecord;
+		
+static
+	A: point[100]; //record array
+	num: int32;
+	fname: string := "data4.txt";
+	fname2: string := "trans4.txt";	
+	
+		
+		/* Read data file */ 
+		
+	procedure readpoints(val filename: string); @noframe; @noalignstack;
+	
+	var
+		fileHandle: int32;
+		theName :string;
+		
+	begin readpoints;
+	
+		// standard entry code
+		push(ebp);
+		mov(esp, ebp);
+		sub(_vars_, esp);  // adjust stack to hold local variable  fileHandle
+		and($FFFF_FFFC, esp);  // force stack alignment
+		
+		// push registers
+		push(eax);
+		push(ebx);
+		push(ecx);
+		push(edx);
+		push(esi);
+
+		//fileio.open(filename, fileio.r);
+		push(filename);
+		pushd(fileio.r);
+		call fileio.open; 
+	
+		mov(eax, fileHandle);
+		mov(0, esi);
+		mov(0, ecx);	
+		
+		//forever;
+		foreverlabel:
+			//fileio.geti32(fileHandle);
+			mov(fileHandle, eax);
+			push(eax);
+			call fileio.geti32;
+			mov(eax, ebx);
+			
+			//fileio.eof(fileHandle);
+			mov(fileHandle, eax);
+			push(eax);
+			call fileio.eof;
+			
+			//if(eax = true) then
+			//	stdout.put("eof A",nl);
+			//	break;
+			//endif;
+			test(eax,eax);
+			jz skipoutputA;
+			
+			// body of if statement goes here
+			lea(edx, "eof A");
+			push(edx);
+			call stdout.puts;
+			call stdout.newln;
+		
+			//break;
+			jmp exitforeverlooplabel;
+			
+		skipoutputA:
+			// end of if block here					
+			intmul(@size(point), ecx, esi);
+						
+			// move the x coord to A.x[i]
+			mov(ebx, A.ID[esi]);
+						
+			//fileio.geti32(fileHandle);
+			mov(fileHandle, eax);
+			push(eax);
+			call fileio.a_gets;
+				
+			//push(theName);
+			mov(eax,theName);
+			
+			//fileio.a_gets(fileHandle);
+			mov(fileHandle, eax);
+			push(eax);
+			call fileio.a_gets;
+			
+			//str.a_cat(stringA,eax);
+			push(theName);
+			push(eax);
+			call str.a_cat;		
+			
+			// move the y coord to A.y[i]
+			mov(eax, A.Names[esi]);
+			
+			//fileio.geti32(fileHandle);
+			mov(fileHandle, eax);
+			push(eax);
+			call fileio.geti32;		
+			
+			// move the z coord to A.z[i]
+			mov(eax, A.balance[esi]);
+			
+			inc(ecx);
+			
+			//fileio.eof(fileHandle);
+			mov(fileHandle, eax);
+			push(eax);
+			call fileio.eof;
+			
+			//if(eax = true) then
+			//	stdout.put("eof B",nl);
+			//	break;
+			//endif;		
+			test(eax,eax);
+			jz skipoutputB;
+			
+			// body of if statement goes here
+			lea(edx, "eof B");
+			push(edx);
+			call stdout.puts;
+			call stdout.newln;
+		
+			//break;
+			jmp exitforeverlooplabel;
+			
+		skipoutputB:	
+		// end of if block here
+			
+		//endfor;
+		jmp foreverlabel;
+	
+	exitforeverlooplabel:
+	
+		mov(ecx, num); //get element num
+		
+		// pop registers
+		pop(esi);
+		pop(edx);
+		pop(ecx);
+		pop(ebx);
+		pop(eax);	
+		
+		// standard exit code
+		mov(ebp, esp);  // pop off the local variable
+		pop(ebp);  // restore old value of ebp register
+		ret(_parms_);  // return and pop the parameter
+	end readpoints;
+	
+	
+	/* Read transaction file */ 
+	
+procedure readtrans(val filename: string);@noframe; @noalignstack;
+
+	var
+		fileHandle: int32;
+		ID: int32;
+		Balance: int32;	
+			
+	begin readtrans;
+		
+		// standard entry code
+		push(ebp);
+		mov(esp, ebp);
+		sub(_vars_, esp);  // adjust stack to hold local variable  fileHandle
+		and($FFFF_FFFC, esp);  // force stack alignment
+		
+		// push registers
+		push(eax);
+		push(ebx);
+		push(ecx);
+		push(edx);
+		push(esi);
+
+		//fileio.open(filename, fileio.r);
+		push(filename);
+		pushd(fileio.r);
+		call fileio.open; 
+	
+		mov(eax, fileHandle);
+		mov(0, esi);
+		mov(0, ecx);
+		//forever;
+		foreverlabel:
+		
+			//fileio.geti32(fileHandle);
+			mov(fileHandle, eax);
+			push(eax);
+			call fileio.geti32;
+			mov(eax, ebx);
+			
+			//fileio.eof(fileHandle);
+			mov(fileHandle, eax);
+			push(eax);
+			call fileio.eof;
+			
+			//if(eax = true) then
+			//	stdout.put("eof A",nl);
+			//	break;
+			//endif;
+			test(eax,eax);
+			jz skipoutputA;
+			
+			// body of if statement goes here
+			lea(edx, "eof A");
+			push(edx);
+			call stdout.puts;
+			call stdout.newln;
+		
+			//break;
+			jmp exitforeverlooplabel;
+			
+			skipoutputA:
+			// end of if block here
+			// move the x coord to A.x[i]
+			mov(ebx, ID); //get ID
+			
+			//fileio.geti32(fileHandle);
+			mov(fileHandle, eax);
+			push(eax);
+			call fileio.geti32;	
+			mov(eax,Balance); //get balance
+			
+			          //stdout.puti32Size(ID,4,'0');
+			          push(ID);
+			          pushd(4);
+			          pushd('0');
+			          call stdout.puti32Size;
+			          
+			          lea(edx,"  ");
+			          push(edx);
+			          call stdout.puts;
+			          
+			          //stdout.puti32Size(Balance, 4, ' ');
+			          push(Balance);
+			          pushd(4);
+			          pushd(' ');
+			          call stdout.puti32Size;
+			 
+			//for(mov(0,ecx);ecx<num;inc(ecx))         
+			mov(0,ecx);
+			WhileLp: //start while loop
+			
+			    intmul(@size(point), ecx, esi);
+			    cmp(ecx,num); 
+			    jnl EndWhileLp; // out op the loop if ecx>=num
+			        //excute following code if ecx<num
+			        //check ID exists or not
+			        mov(A.ID[esi],edx);
+			        
+                    cmp(ID,edx);
+                    jne ElsePart; //if ID not exists, excute Elsepart
+                    
+                    //if find a ID, excute following code
+                    //update balance
+                    mov(A.balance[esi],eax);
+                    add(Balance,eax);
+                    mov(eax,A.balance[esi]);
+                    
+                    lea(edx,"   ");
+                    push(edx);
+                    call stdout.puts;
+                    
+                     //stdout.puti32Size(ID, 4, ' ');
+                     push(ID);
+			         pushd(4);
+			         pushd('0');
+			         call stdout.puti32Size;
+			         
+			         lea(edx,"  ");
+			         push(edx);
+			         call stdout.puts;
+			         	          
+			         push(A.Names[esi]);
+			         call stdout.puts;
+			         
+			         lea(edx,"  ");
+			         push(edx);
+			         call stdout.puts;
+			           
+                    //stdout.puti32Size(eax, 4, ' ');
+			          push(eax);
+			          pushd(4);
+			          pushd(' ');
+			          call stdout.puti32Size;
+			           
+			          call stdout.newln;
+			          call stdout.newln;
+			          
+			          mov(1,ebx);
+			         jmp EndWhileLp; // jump out of loop
+			          
+                  ElsePart:              			   
+			    inc(ecx);
+			    
+			    jmp WhileLp;//jump to the begin of the loop
+			EndWhileLp:
+	
+	         cmp(ebx,1);
+	         je Other;
+	         //stdout.puti32Size(ecx, 4, ' ');		          
+	         lea(edx, "    no transaction");
+			 push(edx);
+			 call stdout.puts;
+			 call stdout.newln;
+			 call stdout.newln;
+			 
+	         Other:
+				//fileio.eof(fileHandle);
+			mov(fileHandle, eax);
+			push(eax);
+			call fileio.eof;
+			
+			//if(eax = true) then
+			//	stdout.put("eof B",nl);
+			//	break;
+			//endif;
+			
+			
+			test(eax,eax);
+			jz skipoutputB;
+			
+			// body of if statement goes here
+			lea(edx, "eof B");
+			push(edx);
+			call stdout.puts;
+			call stdout.newln;
+		
+			//break;
+			jmp exitforeverlooplabel;
+			
+		skipoutputB:	
+		// end of if block here
+			
+		//endfor;
+		jmp foreverlabel;
+	
+	exitforeverlooplabel:
+	// pop registers
+		pop(esi);
+		pop(edx);
+		pop(ecx);
+		pop(ebx);
+		pop(eax);	
+		
+		// standard exit code
+		mov(ebp, esp);  // pop off the local variable
+		pop(ebp);  // restore old value of ebp register
+		ret(_parms_);  // return and pop the parameter			
+end readtrans;
+
+
+/* Print Array */ 
+
+	procedure printA;@noframe; @noalignstack;
+	begin printA;
+		// standard entry code
+		push(ebp);
+		mov(esp, ebp);
+		sub(_vars_, esp);  // adjust stack to hold local variable  fileHandle
+		and($FFFF_FFFC, esp);  // force stack alignment
+		
+		// push registers
+		push(eax);
+		push(ebx);
+		push(ecx);
+		push(edx);
+		push(esi);
+		
+		mov(0,eax);
+		WhileLp:
+		cmp (eax,num);
+		 jnl EndWhileLp; //jump out of loop if eax >= num
+		   		
+			intmul(@size(point), eax, esi);
+				//print ID		
+			push(A.ID[esi]);
+			pushd(4);
+			pushd('0');
+			call stdout.puti32Size;
+			    //print Name
+			lea(edx," ");
+			push(edx);
+			pushd(15);
+			pushd(' ');
+			call stdout.putsSize;
+			
+			push(A.Names[esi]);
+			pushd(-20);
+			pushd(' ');
+			call stdout.putsSize;
+	            //print balance
+			push(A.balance[esi]);
+			pushd(4);
+			pushd(' ');
+			call stdout.puti32Size;
+			call stdout.newln;
+			
+			inc(eax);
+			jmp WhileLp;
+		EndWhileLp:
+		// pop registers
+		pop(esi);
+		pop(edx);
+		pop(ecx);
+		pop(ebx);
+		pop(eax);	
+		
+		// standard exit code
+		mov(ebp, esp);  // pop off the local variable
+		pop(ebp);  // restore old value of ebp register
+		ret(_parms_);  // return and pop the parameter
+	end printA;
+
+
+/* Sort array by account ID */ 
+	
+	procedure sortX;@noframe; @noalignstack;
+	
+	var
+		noSwap:  int32;
+		
+	begin sortX;
+		// standard entry code
+		push(ebp);
+		mov(esp, ebp);
+		sub(_vars_, esp);  // adjust stack to hold local variable  fileHandle
+		and($FFFF_FFFC, esp);  // force stack alignment
+		
+		// push registers
+		push(eax);
+		push(ebx);
+		push(ecx);
+		push(edx);
+		push(esi);
+
+		RepeatLabel: //repeate:
+			mov(1, noSwap); //noSwap bu true
+			mov(num,edx);
+			sub(1,edx);
+			
+			mov(0,eax);
+			
+			WhileLp:
+			 cmp(eax,edx);
+			 jnl EndWhileLp; //jump out of loop
+		            //otherwise
+				intmul(@size(point), eax, esi);				
+				mov(A.ID[esi], ebx);
+				
+				cmp(ebx , A.ID[esi+@size(point)]); // compare two ID
+				    jng NotSwap; // if A.ID[i] < A.ID[i+1], not swap data
+				    
+				    //if A.ID[i] < A.ID[i+1], do the follwing code
+				       //swap ID
+					mov(A.ID[esi+@size(point)], ecx);
+					mov(ecx, A.ID[esi]);
+					mov(ebx, A.ID[esi+@size(point)]);
+					   //swap name
+					mov(A.Names[esi], ebx);
+					mov(A.Names[esi+@size(point)], ecx);
+					mov(ecx, A.Names[esi]);
+					mov(ebx, A.Names[esi+@size(point)]);					
+					  //swap balance
+					mov(A.balance[esi], ebx);
+					mov(A.balance[esi+@size(point)], ecx);
+					mov(ecx, A.balance[esi]);
+					mov(ebx, A.balance[esi+@size(point)]);			
+					mov(0,noSwap); //set noSawp be false
+					
+				NotSwap: 
+				inc(eax);
+				jmp WhileLp;
+				
+			EndWhileLp:
+			
+		cmp(noSwap,1);
+		jne RepeatLabel; //until(noSwap);
+		
+		// pop registers
+		pop(esi);
+		pop(edx);
+		pop(ecx);
+		pop(ebx);
+		pop(eax);	
+		
+		// standard exit code
+		mov(ebp, esp);  // pop off the local variable
+		pop(ebp);  // restore old value of ebp register
+		ret(_parms_);  // return and pop the parameter
+	end sortX;
+
+
+
+/* Sort array by balance*/
+
+	 procedure sortZ;@noframe; @noalignstack;
+	 
+		var
+		noSwap:  int32;
+		
+	begin sortZ;
+	
+		// standard entry code
+		push(ebp);
+		mov(esp, ebp);
+		sub(_vars_, esp);  // adjust stack to hold local variable  fileHandle
+		and($FFFF_FFFC, esp);  // force stack alignment
+		
+		// push registers
+		push(eax);
+		push(ebx);
+		push(ecx);
+		push(edx);
+		push(esi);
+
+		RepeatLabel: //repeate:
+		
+			mov(1, noSwap); 
+			mov(num,edx);
+			sub(1,edx);
+			
+			mov(0,eax); //for .... do
+			WhileLp:
+			
+			 cmp(eax,edx);
+			 jnl EndWhileLp;
+		
+				intmul(@size(point), eax, esi);
+				
+				mov(A.balance[esi], ebx);
+				
+				   //check if(A.balance[i] < A.balance[i+1]
+				cmp(ebx , A.balance[esi+@size(point)]);
+				 jnl NotSwap; // not true, do not swap
+				 
+				        //swap balance
+					mov(A.balance[esi+@size(point)], ecx);
+					mov(ecx, A.balance[esi]);
+					mov(ebx, A.balance[esi+@size(point)]);
+					   //swap name
+					mov(A.Names[esi], ebx);
+					mov(A.Names[esi+@size(point)], ecx);
+					mov(ecx, A.Names[esi]);
+					mov(ebx, A.Names[esi+@size(point)]);					
+					   //swap ID
+					mov(A.ID[esi], ebx);
+					mov(A.ID[esi+@size(point)], ecx);
+					mov(ecx, A.ID[esi]);
+					mov(ebx, A.ID[esi+@size(point)]);
+					
+					mov(0,noSwap);
+					
+				NotSwap:
+				inc(eax);
+				jmp WhileLp; 		
+			EndWhileLp: //end for	
+		cmp(noSwap,1);
+		jne RepeatLabel; // until(noSwap)
+		
+		// pop registers
+		pop(esi);
+		pop(edx);
+		pop(ecx);
+		pop(ebx);
+		pop(eax);	
+		
+		// standard exit code
+		mov(ebp, esp);  // pop off the local variable
+		pop(ebp);  // restore old value of ebp register
+		ret(_parms_);  // return and pop the parameter		
+	end sortZ;
+
+
+begin project4LowLevel; //start call 
+
+    /* Read and Print original data */ 
+	push(fname); //push paramter
+	call readpoints; //call procedure
+    stdout.put(nl,nl);
+	stdout.put("*** Original Data", nl);
+	stdout.put(nl);
+    stdout.put(" AccountID ");
+    stdout.put("         Name     ");
+    stdout.put("        Balance ",nl);
+    stdout.put("----------");
+    stdout.put("        -------------    ");
+    stdout.put(" -----------  ",nl);
+    
+	call printA; //call procedure
+	
+	
+	 /* Sort data based on account ID */ 
+	call sortX; 
+	stdout.put(nl,nl);
+    stdout.put("*** Data sorted by account ID", nl);
+	stdout.put(nl);
+    stdout.put(" AccountID ");
+    stdout.put("         Name     ");
+    stdout.put("        Balance ",nl);
+    stdout.put("----------");
+    stdout.put("        -------------    ");
+    stdout.put(" -----------  ",nl);
+    
+	call printA;
+	stdout.put(nl,nl,nl);
+	
+	/* Reaf transactino and update data */ 
+	stdout.put("*** Start transaction", nl, nl);
+	push(fname2);
+	call readtrans;
+	stdout.put(nl);
+	
+	/* Sort data based on balance */ 
+	call sortZ;
+	stdout.put(nl,nl);
+    stdout.put("*** Data sorted by balance", nl);
+	stdout.put(nl,nl);
+    stdout.put(" AccountID ");
+    stdout.put("         Name     ");
+    stdout.put("        Balance ",nl);
+    stdout.put("----------");
+    stdout.put("        -------------    ");
+    stdout.put(" -----------  ",nl);
+    
+	call printA;
+	
+	
+end project4LowLevel;

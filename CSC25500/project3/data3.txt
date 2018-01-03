@@ -1,0 +1,55 @@
+004457
+Donald Knuth
+77 98 88 78
+004329
+Grace Hopper
+98 87 93 89
+002359
+Larry Page
+98 93 94 90
+004392
+Ada Lovelace
+88 59 67 90
+005426
+Edsger Dijkstra
+60 90 96 77
+003358
+Ken Thompson
+55 34 23 77
+000045
+Sergey Brin
+99 88 55 94
+003545
+Alan Turing
+88 82 78 68
+004000
+Charles Babbage
+55 89 78 90
+003911
+Niklaus Wirth
+92 92 94 80
+003174
+John VonNeumann
+66 56 71 65
+003329
+John Backus
+66 62 54 45
+003199
+Dennis Ritchie
+55 66 66 62
+001001
+Bjarne Stroustrup
+90 77 72 68
+005358
+Brian Kernighan
+78 76 77 71
+004358
+Andrew Tannenbaum
+77 66 74 50
+004248
+Leslie Lamport
+77 71 76 75
+003000
+Alan Perlis
+88 88 81 82
+-1
