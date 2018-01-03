@@ -13,7 +13,7 @@ public class BaseBall {
 	 
 	   // JDBC driver name and database URL
 	 static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
-	 static final String DB_URL = "jdbc:mysql://lindenwoodcshome.ddns.net/shangz";
+	 static final String DB_URL = "..."; //give mysql database url
 
 		   //  Database credentials
 	 static final String USER = "username";
